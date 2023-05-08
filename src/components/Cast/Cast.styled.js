@@ -2,18 +2,18 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   margin-top: 30px;
-  padding-right: 40px;
-  padding-left: 40px;
+  padding-right: 80px;
+  padding-left: 80px;
   padding-bottom: 40px;
 `;
 
-export const ReviewHeader = styled.h3`
+export const CastHeader = styled.h3`
   font-size: 25px;
   font-weight: 500;
   text-align: center;
 `;
 
-export const ReviewList = styled.ul`
+export const CastList = styled.ul`
   margin-top: 30px;
   display: flex;
   align-items: center;
@@ -21,22 +21,22 @@ export const ReviewList = styled.ul`
   flex-wrap: wrap;
 `;
 
-export const ReviewListItem = styled.li`
-  padding-bottom: 10px;
-  border-bottom: 1px solid #d3d3d3;
+export const CastListItem = styled.li`
+  width: calc((100% - 4 * 40px) / 5);
+  height: 400px;
+  word-wrap: break-word;
 `;
 
-export const Author = styled.h4`
+export const CastInfo = styled.div`
+  margin-top: 20px;
+  max-width: 220px;
+`;
+
+export const CastName = styled.h3`
   margin-bottom: 10px;
-  font-size: 20px;
-  font-weight: 500;
 `;
 
-export const Review = styled.p`
-  line-height: 1.3;
-`;
-
-export const NoReviewsText = styled.p`
+export const NoCastText = styled.p`
   margin: 30px auto 0 auto;
   text-align: center;
   padding: 20px;

@@ -1,31 +1,41 @@
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
-const MovieList = ({trendingMovies}) => {
-    return (
-    <section>
-            <h2>Trending today</h2>
-            <ul>
-                {trendingMovies.map(movie => {
-                    return (
-                        <li key={movie.id}>
-                        <NavLink to={`/movies/${movie.id}`}>
-                                {movie.title}
-                        </NavLink>
-                            </li>
-                    )
-                })}
-            </ul>
-    </section>
-)
-}
+import {
+  StyledSection,
+  StyledLink,
+  SectionTitle,
+  List,
+  ListItem,
+} from './MovieList.styled'; 
+
+const MovieList = ({ trendingMovies }) => {
+  return (
+    <StyledSection>
+      <SectionTitle>Trending today</SectionTitle>
+
+      <List>
+        {trendingMovies.map(trendingMovie => (
+          <ListItem key={trendingMovie.id}>
+            <StyledLink to={`/movies/${trendingMovie.id}`}>
+              {trendingMovie.title}
+            </StyledLink>
+          </ListItem>
+        ))}
+      </List>
+    </StyledSection>
+  );
+};
+
 export default MovieList;
 
 MovieList.propTypes = {
   trendingMovies: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired
+      title: PropTypes.string.isRequired,
+      release_date: PropTypes.string.isRequired,
+      overview: PropTypes.string.isRequired,
+      poster_path: PropTypes.string,
+      vote_average: PropTypes.number.isRequired,
     })
-  ).isRequired
-}
-
+  ).isRequired,
+};

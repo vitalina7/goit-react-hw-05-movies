@@ -1,50 +1,52 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchMovieByReviews } from 'services/api';
+import { useParams } from 'react-router-dom'; 
+import { fetchMovieReviews } from '../../services/api';
+import {
+  Author,
+  NoReviewsText,
+  Review,
+  ReviewHeader,
+  ReviewList,
+  ReviewListItem,
+  Wrapper,
+} from './Reviews.styled'; 
 
 const Reviews = () => {
-  const [reviews, setReviews] = useState([]);
-  const { movieId } = useParams();
+  const { movieId } = useParams(); 
+  const [reviews, setReviews] = useState([]); 
+
 
   useEffect(() => {
-    let isMounted = true;
-
-    const getReviews = async () => {
+    const fetchReviews = async () => {
       try {
-        const fetchedReviews = await fetchMovieByReviews(movieId);
-
-        if (isMounted) {
-          setReviews(fetchedReviews);
-        }
+        const { results } = await fetchMovieReviews(movieId);
+        setReviews(results);
       } catch (error) {
         console.log(error);
       }
     };
 
-    getReviews();
-
-    return () => {
-      isMounted = false;
-    };
+    fetchReviews();
   }, [movieId]);
 
   return (
-    <div>
-      <div>Reviews</div>
+    <Wrapper>
+      <ReviewHeader>Reviews</ReviewHeader>
       {reviews.length ? (
-        <ul>
-          {reviews.map((review) => (
-              <li key={review.id}>
-                  <p>Author:{review.author }</p>
-                  <p>{review.content}</p>
-            </li>
+        <ReviewList className="reviews-container">
+          {reviews.map(review => (
+            <ReviewListItem className="review-card" key={review.id}>
+              <Author>Author: {review.author}</Author>
+              <Review>{review.content}</Review>
+            </ReviewListItem>
           ))}
-        </ul>
+        </ReviewList>
       ) : (
-        <p>Sorry, we didn't find any reviews</p>
+        <NoReviewsText>
+          We don't have any reviews for this movie yet.
+        </NoReviewsText>
       )}
-    </div>
+    </Wrapper>
   );
 };
-
 export default Reviews;

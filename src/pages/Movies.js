@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useLocation, NavLink } from 'react-router-dom'; 
+import { useSearchParams, useLocation } from 'react-router-dom'; // додаємо хук для роботи з параметрами URL
+import { toast } from 'react-hot-toast'; // імпортуємо плагін для сповіщень
 import { fetchMovieByName } from '../services/api';
 import SearchMovies from '../components/SearchMovies/SearchMovies';
-
+import {
+  List,
+  ListItem,
+  SectionTitle,
+  StyledLink,
+  StyledSection,
+} from '../components/MovieList/MovieList.styled'; 
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
@@ -14,45 +21,53 @@ const Movies = () => {
     const query = searchParams.get('query') ?? ''; 
     if (!query) return;
 
-    
+   
     const getMovie = async () => {
       try {
         const { results } = await fetchMovieByName(query);
 
        
         if (results.length === 0) {
-          setMovies([]); 
+          toast.dismiss();
+          toast.error('No movies found');
+          setMovies([]);
         } else {
           setMovies(results); 
         }
       } catch (error) {
+        toast.error(error.message);
         setMovies([]);
       }
     };
+
+   
       getMovie();
   }, [searchParams]);
 
+  
   const handleSubmit = query => {
-    setSearchParams({ query }); // записуємо query в URL
+    setSearchParams({ query }); 
   };
 
   return (
     <main>
-      <div>
-        <h1>Movies Page</h1>
+      <StyledSection>
+        <SectionTitle>Movies Page</SectionTitle>
 
         <SearchMovies onSubmit={handleSubmit} /> 
 
-        <ul>
+        <List>
           {movies.map(movie => (
-            <li key={movie.id}>
-             <NavLink to={`/movies/${movie.id}`} state={{ from: location }}>
+            <ListItem key={movie.id}>
+
+             
+              <StyledLink to={`/movies/${movie.id}`} state={{ from: location }}>
                 {movie.title}
-              </NavLink>
-            </li>
+              </StyledLink>
+            </ListItem>
           ))}
-        </ul>
-      </div>
+        </List>
+      </StyledSection>
     </main>
   );
 };

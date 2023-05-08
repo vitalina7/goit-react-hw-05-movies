@@ -1,68 +1,99 @@
-import { NavLink } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom'; 
 import PropTypes from 'prop-types';
+import {
+  Img,
+  List,
+  ListItem,
+  MoreInfoHeader,
+  MoreInfoWrapper,
+  MovieCardContainer,
+  MovieInfo,
+  MovieInfoText,
+  MovieInfoTextBold,
+  MovieName,
+  StyledLink,
+} from './MovieCard.styled'; 
+import { LoadingIndicator } from 'components/SharedLayout/LoadingDots'; 
 
 const MovieCard = ({ movie }) => {
-  const { title, release_date, poster_path, vote_average, overview, genres } = movie;
+  const { title, release_date, poster_path, vote_average, overview, genres } =
+  movie;
   const location = useLocation();
-  const posterUrl = `https://image.tmdb.org/t/p/w500/${poster_path}`;
-  const releaseYear = release_date ? new Date(release_date).getFullYear() : '-';
-  const userScore = vote_average ? `${vote_average * 10}%` : '-';
+  const releaseDate = new Date(release_date);
+
+  
+  const releaseYear = isNaN(releaseDate)
+    ? 'Unknown'
+    : releaseDate.getFullYear();
+
+
+  const posterUrl = poster_path
+    ? `https://image.tmdb.org/t/p/w400/${poster_path}`
+    : 'https://via.placeholder.com/400x600.png?text=Poster+Not+Available';
+
+
+  const userScore = vote_average
+    ? `${(vote_average * 10).toFixed(0)}%`
+    : 'Not rated yet';
+
+ 
+  if (!title) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <>
-      <div>
-        <img src={posterUrl} alt={`${title} poster`} />
+      <MovieCardContainer>
+        <Img src={posterUrl} alt={`${title} poster`} />
 
-        <div>
-          <p>
+        <MovieInfo>
+          <MovieName>
             {title ?? 'Unknown'} ({releaseYear})
-          </p>
-          <p>User Score: {userScore}</p>
-          <div>
-            <p>Overview:</p> {overview}
-          </div>
+          </MovieName>
+          <MovieInfoText>User Score: {userScore}</MovieInfoText>
+          <MovieInfoText>
+            <MovieInfoTextBold>Overview:</MovieInfoTextBold> {overview}
+          </MovieInfoText>
+
+        
           {genres && genres.length > 0 && (
-            <div>
-              <p>Genres:</p>
+            <MovieInfoText>
+              <MovieInfoTextBold>Genres:</MovieInfoTextBold>
               {genres.map(genre => genre.name).join(', ')}
-            </div>
+            </MovieInfoText>
           )}
-        </div>
+        </MovieInfo>
 
-      </div>
+      </MovieCardContainer>
 
-      <div>
-        <h1>Additional information</h1>
+      <MoreInfoWrapper>
+        <MoreInfoHeader>Additional information</MoreInfoHeader>
 
-        <ul>
-          <li>
-            <NavLink
-              to={{ 
-                pathname: `/movies/${movie.id}/cast`, 
-                state: { from: location?.state?.from ?? '/' } 
-              }}
+        <List>
+          <ListItem>
+            <StyledLink
+              to="cast"
+              state={{ from: location?.state?.from ?? '/' }} 
             >
               Cast
-            </NavLink>
-          </li>
+            </StyledLink>
+          </ListItem>
 
-          <li>
-            <NavLink
-              to={{ 
-                pathname: `/movies/${movie.id}/reviews`, 
-                state: { from: location?.state?.from ?? '/' } 
-              }}
+          <ListItem>
+            <StyledLink
+              to="reviews"
+              state={{ from: location?.state?.from ?? '/' }}
             >
               Reviews
-            </NavLink>
-          </li>
-        </ul>
+            </StyledLink>
+          </ListItem>
+        </List>
 
-      </div>
+      </MoreInfoWrapper>
     </>
   );
-}
+};
+
 
 MovieCard.propTypes = {
   movie: PropTypes.shape({

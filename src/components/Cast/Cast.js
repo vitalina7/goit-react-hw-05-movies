@@ -1,48 +1,68 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchMovieByCast } from 'services/api';
+import { useParams } from 'react-router-dom'; 
+import { fetchMovieCast } from '../../services/api'; 
+import {
+  CastHeader,
+  CastInfo,
+  CastList,
+  CastListItem,
+  CastName,
+  NoCastText,
+  Wrapper,
+} from './Cast.styled'; 
 
 const Cast = () => {
+  const { movieId } = useParams(); 
   const [cast, setCast] = useState([]);
-  const { movieId } = useParams();
 
   useEffect(() => {
-    const getCast = async () => {
+    const fetchCast = async () => {
       try {
-        const fetchedCast = await fetchMovieByCast(movieId);
-        setCast(fetchedCast);
+        const { cast } = await fetchMovieCast(movieId);
+        setCast(cast);
       } catch (error) {
         console.log(error);
       }
     };
 
-    getCast();
-
-    return () => {
-      setCast([]);
-    };
+    fetchCast();
   }, [movieId]);
 
   return (
-    <div>
-      <div>Cast</div>
+    <Wrapper>
+      <CastHeader>Cast</CastHeader> 
       {cast.length ? (
-        <ul>
-          {cast.map((actor) => (
-            <li key={actor.id}>
+        <CastList>
+          {cast.map(actor => (
+            <CastListItem className="cast-card" key={actor.id}>
+
+            
               {actor.profile_path ? (
-                <img src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`} alt={actor.name} />
+                <img
+                  src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
+                  alt={`${actor.name} profile`}
+                />
               ) : (
-                <img src="placeholder-image-url" alt="placeholder" />
+                <img
+                  src={`https://via.placeholder.com/200x300?text=No+Image`}
+                  alt={`${actor.name} profile`}
+                />
               )}
-              <p>{actor.name}</p>
-            </li>
+
+            
+              <CastInfo>
+                <CastName>{actor.name}</CastName>
+                <p>Character: {actor.character}</p>
+              </CastInfo>
+            </CastListItem>
           ))}
-        </ul>
+        </CastList>
       ) : (
-        <p>Sorry, no cast available</p>
+        <NoCastText>
+          We don't have any information about the cast yet.
+        </NoCastText>
       )}
-    </div>
+    </Wrapper>
   );
 };
 
