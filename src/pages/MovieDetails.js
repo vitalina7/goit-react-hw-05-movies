@@ -1,48 +1,47 @@
-import { Suspense, useRef, useEffect, useState } from 'react';
-import { useParams, Outlet, useLocation, Link, Route } from 'react-router-dom';
-import { fetchMovieById } from 'services/api';
+import { Suspense } from 'react'; 
+import { useEffect, useState } from 'react'; 
+import { useParams, Outlet, useLocation, Link } from 'react-router-dom'; 
+import { fetchMovieById } from '../services/api'; 
 import MovieCard from '../components/MovieCard/MovieCard';
-import Cast from '../components/Cast/Cast';
-import Reviews from '../components/Reviews/Reviews';
 
-const MovieDetails = () => {
-  const location = useLocation();
+
+const MovieDelails = () => {
   const { movieId } = useParams();
+  const location = useLocation();
   const [selectedMovie, setSelectedMovie] = useState({});
-  const backLinkLocationRef = useRef(location.state?.from ?? '/movies');
+
 
   useEffect(() => {
-    const getMovieById = async (id) => {
+    const fetchSelectedMovie = async movieId => {
       try {
-        const selectedMovie = await fetchMovieById(id);
-        setSelectedMovie(selectedMovie);
+        const movieData = await fetchMovieById(movieId);
+        setSelectedMovie(movieData);
       } catch (error) {
         console.log(error);
       }
     };
 
-    getMovieById(movieId);
+    fetchSelectedMovie(movieId);
   }, [movieId]);
 
   return (
-    <div>
-      <MovieCard movie={selectedMovie} />
-      <Link to={backLinkLocationRef.current}>Go back</Link>
-      <ul>
-        <li>
-          <Link to="cast">Cast</Link>
-        </li>
-        <li>
-          <Link to="reviews">Reviews</Link>
-        </li>
-      </ul>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Outlet />
-        <Route path="cast" element={<Cast movie={selectedMovie} />} />
-        <Route path="reviews" element={<Reviews movie={selectedMovie} />} />
-      </Suspense>
-    </div>
+    <main>
+      <div>
+        <Link to={location?.state?.from ?? '/'}>
+          <button type="button">
+            Go back
+          </button>
+        </Link>
+
+        <MovieCard movie={selectedMovie} />
+
+      
+        <Suspense fallback={<div>Loading....</div>}>
+          <Outlet />
+        </Suspense>
+      </div>
+    </main>
   );
 };
 
-export default MovieDetails;
+export default MovieDelails;
